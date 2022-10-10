@@ -20,7 +20,7 @@ func (p *EdgeConfig) OnEvent(event any) {
 	case FirstConfig:
 		if len(p.Origin) < 4 {
 			plugin.Warn("origin config error plugin disabled")
-			plugin.RawConfig["enabled"] = false
+			plugin.RawConfig["enable"] = false
 		} else {
 			switch p.Origin[:4] {
 			case "http":

@@ -12,7 +12,6 @@ import (
 type EdgeConfig struct {
 	Origin string //源服务器地址
 	config.Pull
-	puller IPuller
 }
 
 func (p *EdgeConfig) OnEvent(event any) {
@@ -21,20 +20,20 @@ func (p *EdgeConfig) OnEvent(event any) {
 		if len(p.Origin) < 4 {
 			plugin.Warn("origin config error plugin disabled")
 			plugin.RawConfig["enable"] = false
-		} else {
-			switch p.Origin[:4] {
-			case "http":
-				p.puller = new(hdl.HDLPuller)
-			case "rtmp":
-				p.puller = new(rtmp.RTMPPuller)
-			case "rtsp":
-				p.puller = new(rtsp.RTSPPuller)
-			default:
-				plugin.Panic("origin config not support")
-			}
 		}
 	case *Stream:
-		err := plugin.Pull(v.Path, p.Origin+v.Path, p.puller, false)
+		var puller IPuller
+		switch p.Origin[:4] {
+		case "http":
+			puller = new(hdl.HDLPuller)
+		case "rtmp":
+			puller = new(rtmp.RTMPPuller)
+		case "rtsp":
+			puller = new(rtsp.RTSPPuller)
+		default:
+			plugin.Panic("origin config not support")
+		}
+		err := plugin.Pull(v.Path, p.Origin+v.Path, puller, false)
 		if err != nil {
 			plugin.Error("pull", zap.Error(err))
 		}

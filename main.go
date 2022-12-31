@@ -33,7 +33,7 @@ func (p *EdgeConfig) OnEvent(event any) {
 		default:
 			plugin.Panic("origin config not support")
 		}
-		err := plugin.Pull(v.Path, p.Origin+v.Path, puller, false)
+		err := plugin.Pull(v.Path, p.Origin+v.Path, puller, 0)
 		if err != nil {
 			plugin.Error("pull", zap.Error(err))
 		}

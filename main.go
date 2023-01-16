@@ -25,7 +25,7 @@ func (p *EdgeConfig) OnEvent(event any) {
 		var puller IPuller
 		switch p.Origin[:4] {
 		case "http":
-			puller = new(hdl.HDLPuller)
+			puller = hdl.NewHDLPuller()
 		case "rtmp":
 			puller = new(rtmp.RTMPPuller)
 		case "rtsp":

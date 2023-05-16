@@ -19,7 +19,7 @@ func (p *EdgeConfig) OnEvent(event any) {
 	case FirstConfig:
 		if len(p.Origin) < 4 {
 			plugin.Warn("origin config error plugin disabled")
-			plugin.RawConfig["enable"] = false
+			plugin.Disabled = true
 		}
 	case *Stream:
 		var puller IPuller

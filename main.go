@@ -10,18 +10,18 @@ import (
 )
 
 type EdgeConfig struct {
-	Origin string //源服务器地址
 	config.Pull
+	Origin string //源服务器地址
 }
 
 func (p *EdgeConfig) OnEvent(event any) {
 	switch v := event.(type) {
 	case FirstConfig:
 		if len(p.Origin) < 4 {
-			plugin.Warn("origin config error plugin disabled")
-			plugin.Disabled = true
+			EdgePlugin.Warn("origin config error plugin disabled")
+			EdgePlugin.Disabled = true
 		}
-	case *Stream:
+	case InvitePublish:
 		var puller IPuller
 		switch p.Origin[:4] {
 		case "http":
@@ -31,13 +31,13 @@ func (p *EdgeConfig) OnEvent(event any) {
 		case "rtsp":
 			puller = new(rtsp.RTSPPuller)
 		default:
-			plugin.Panic("origin config not support")
+			EdgePlugin.Panic("origin config not support")
 		}
-		err := plugin.Pull(v.Path, p.Origin+v.Path, puller, 0)
+		err := EdgePlugin.Pull(v.Target, p.Origin+v.Target, puller, 0)
 		if err != nil {
-			plugin.Error("pull", zap.Error(err))
+			EdgePlugin.Error("pull", zap.Error(err))
 		}
 	}
 }
 
-var plugin = InstallPlugin(new(EdgeConfig))
+var EdgePlugin = InstallPlugin(new(EdgeConfig))
